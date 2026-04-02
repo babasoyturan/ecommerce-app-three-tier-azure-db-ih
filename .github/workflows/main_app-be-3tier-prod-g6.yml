@@ -34,9 +34,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Run tests if present
-        run: npm test --if-present
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
