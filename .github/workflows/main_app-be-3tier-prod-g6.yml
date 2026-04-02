@@ -34,6 +34,18 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Run tests if present
+        run: npm test -- --passWithNoTests
+
+      - name: Remove dev dependencies
+        run: npm prune --omit=dev
+
+      - name: Upload backend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-app
+          path: ./ecommerce-app-backend
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -43,8 +55,11 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Download backend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-app
+          path: ./backend-app
 
       - name: Log in to Azure
         uses: azure/login@v2
@@ -53,9 +68,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E6586798DCFB4F7A861014DAF207CA91 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0362A5CBA9834A39ACC94C6D5285F7C2 }}
 
-      - name: Deploy backend folder to Azure Web App
+      - name: Deploy backend to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'app-be-3tier-prod-g6'
           slot-name: 'Production'
-          package: './ecommerce-app-backend'
+          package: ./backend-app
