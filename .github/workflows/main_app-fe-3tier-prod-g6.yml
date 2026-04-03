@@ -34,7 +34,7 @@ jobs:
       - name: Build frontend
         env:
           CI: false
-          REACT_APP_API_URL: /api
+          REACT_APP_API_URL: https://app-be-3tier-prod-g6.azurewebsites.net/api
         run: npm run build
 
       - name: Upload frontend build artifact
